@@ -1,0 +1,10 @@
+{"input": "This is the best purchase I've made all year. Absolutely love it!", "expected": "positive", "metadata": {"difficulty": "easy"}}
+{"input": "Broke after two days and support never replied. Avoid.", "expected": "negative", "metadata": {"difficulty": "easy"}}
+{"input": "It arrived on time. The box was a normal cardboard box.", "expected": "neutral", "metadata": {"difficulty": "easy"}}
+{"input": "Does exactly what it says. No complaints, no surprises.", "expected": "positive", "metadata": {"difficulty": "medium"}}
+{"input": "I wanted to love this but the battery life is a dealbreaker.", "expected": "negative", "metadata": {"difficulty": "medium"}}
+{"input": "Pretty good overall, though the app could be less buggy.", "expected": "positive", "metadata": {"difficulty": "medium"}}
+{"input": "Not as bad as the reviews said, honestly.", "expected": "positive", "metadata": {"difficulty": "hard"}}
+{"input": "The product is fine. The price is not.", "expected": "negative", "metadata": {"difficulty": "hard"}}
+{"input": "Standard issue. Works like every other one of these.", "expected": "neutral", "metadata": {"difficulty": "medium"}}
+{"input": "Terrible packaging, but the item inside is fantastic.", "expected": "positive", "metadata": {"difficulty": "hard"}}
