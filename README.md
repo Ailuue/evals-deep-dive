@@ -298,7 +298,7 @@ the same operational care as the app it grades:
 These shortcuts are right for learning and wrong for production. All seven
 concerns — observability, cost, reliability, caching, guardrails, prompt
 versioning, and eval gates — are built from scratch and wired into one running
-app in **[Production](https://github.com/Ailuue/production-deep-dive)** (#7 in the
+app in **[Production](https://github.com/Ailuue/ai-in-production-deep-dive)** (#8 in the
 series), where this repo's eval *gate* sits on the request path. It runs
 **offline on a mock provider**, so you can see the whole ops machinery with no key
 and no cost.
@@ -371,6 +371,6 @@ this sequence builds naturally:
 5. [Evals](https://github.com/Ailuue/evals-deep-dive) — measure whether a change actually helps
 6. [Agents](https://github.com/Ailuue/agents-deep-dive) — give a model tools and a loop so it can act
 7. [Prompt Injection & Guardrails](https://github.com/Ailuue/prompt-injection-deep-dive) — attack and defend all of the above
-8. [Production](https://github.com/Ailuue/production-deep-dive) — operate one app end to end: observability, cost, reliability, caching, guardrails, prompt versioning, eval gates
+8. [Production](https://github.com/Ailuue/ai-in-production-deep-dive) — operate one app end to end: observability, cost, reliability, caching, guardrails, prompt versioning, eval gates
 
 **You are here: #5 — Evals.**
