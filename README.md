@@ -8,7 +8,7 @@ statistical significance, and regression gates — by building each one yourself
 promptfoo, no OpenAI Evals, no Ragas; just enough code to *see* how evaluation
 works.
 
-This is the fifth of eight repos in a series. The first four teach you to
+This is the fifth of eight core repos in the series. The first four teach you to
 *build* LLM apps — the [OpenAI API](https://github.com/Ailuue/openai-api-deep-dive) and
 [Claude API](https://github.com/Ailuue/claude-api-deep-dive), [prompt engineering](https://github.com/Ailuue/prompt-engineering-deep-dive), and a [RAG](https://github.com/Ailuue/rag-deep-dive) system on top.
 This one teaches you to *measure* them. It's the meta-skill that makes the other
@@ -227,6 +227,53 @@ example — it uses a small slice and a few runs; turn them down to spend less.)
 
 ---
 
+## Going further — four more kinds of eval
+
+The core loop scores a single output string. These extend it to the cases you hit in
+practice. The first three run **offline and free** (they're about *method*); the
+fourth (faithfulness) is a model-graded judge, so it makes small calls.
+
+### Evaluating an agent's trajectory
+A right final answer can hide a broken process: the lucky guess, the forbidden tool
+call, the 9-step solution to a 2-step task. When the system under test is an *agent*,
+grade the **trace** (steps taken + answer) on several axes — answer correctness, did
+it use the required tool, did it avoid forbidden ones, did it stay within a step
+budget.
+```bash
+python examples/10_agent_trajectory.py
+```
+
+### Human annotation & inter-annotator agreement
+Your gold labels usually come from humans, and humans disagree. Before trusting a
+labelled set, measure how much annotators agreed — **observed agreement** and
+**Cohen's kappa** (agreement corrected for chance). A low kappa means your "ground
+truth" is noisy, and every score built on it inherits that noise.
+```bash
+python examples/11_human_annotation.py
+```
+
+### Online evals — A/B testing on live traffic
+A passing offline score doesn't prove real users are better off. The complement is
+the **online eval**: split live traffic into A (control) and B (the change), compare
+an outcome metric you care about, and ship B only if the gap clears the margin of
+error *and* no guardrail (latency, refusals, cost) regressed.
+```bash
+python examples/12_online_eval.py
+```
+
+### Faithfulness — did the answer stay grounded in its context?
+The eval every RAG system needs and correctness-only evals miss: a fluent,
+even *true* answer that asserts something the retrieved context never said — a
+hallucination. `judge_faithfulness(context, answer)` is a **reference-free** judge
+(it needs only the context, no gold answer) that scores whether every claim is
+grounded. The example answers the same questions a *grounded* way and a *loose* way
+and shows the loose prompt inventing plausible facts the context doesn't support.
+```bash
+python examples/13_faithfulness.py
+```
+
+---
+
 ## 11. The capstone: `eval_run.py`
 
 Everything comes together in one command-line tool that runs an eval **suite**,
@@ -334,6 +381,10 @@ examples/
   07_pairwise.py            ← pairwise win-rate between two prompts
   08_judge_bias.py          ← position bias and how to mitigate it
   09_nondeterminism.py      ← variance, confidence intervals, is-it-real?
+  10_agent_trajectory.py    ← grade an agent's steps, not just its answer (offline)
+  11_human_annotation.py    ← annotator agreement & Cohen's kappa (offline)
+  12_online_eval.py         ← A/B testing on live traffic; significance + guardrails (offline)
+  13_faithfulness.py        ← reference-free groundedness judge for RAG (grounded vs loose)
 ```
 
 ---
@@ -358,7 +409,7 @@ at the top, and run it directly.
 
 ## The series
 
-This is one of eight standalone, hands-on deep dives into building with LLM APIs.
+This is one of thirteen standalone, hands-on deep dives into building with LLM APIs — eight core, plus five bonus dives.
 Each one stands on its own — its own setup, examples, and capstone — and they all
 share the same house style: provider-agnostic, built from scratch (no
 frameworks), offline-first examples, and a real capstone. Do them in any order;
@@ -372,5 +423,13 @@ this sequence builds naturally:
 6. [Agents](https://github.com/Ailuue/agents-deep-dive) — give a model tools and a loop so it can act
 7. [Prompt Injection & Guardrails](https://github.com/Ailuue/prompt-injection-deep-dive) — attack and defend all of the above
 8. [Production](https://github.com/Ailuue/ai-in-production-deep-dive) — operate one app end to end: observability, cost, reliability, caching, guardrails, prompt versioning, eval gates
+
+**Bonus dives** — standalone, slotting in where they're most useful:
+
+- [Context Engineering](https://github.com/Ailuue/context-engineering-deep-dive) — manage what's in the window: memory, compaction, assembly
+- [Multimodal](https://github.com/Ailuue/multimodal-deep-dive) — images & audio, not just text
+- [Fine-tuning](https://github.com/Ailuue/fine-tuning-deep-dive) — teach a model new behavior by example
+- [MCP](https://github.com/Ailuue/mcp-deep-dive) — serve tools, data & prompts to any LLM over a standard protocol
+- [Local Models](https://github.com/Ailuue/local-models-deep-dive) — run open-weight models on your own machine
 
 **You are here: #5 — Evals.**
