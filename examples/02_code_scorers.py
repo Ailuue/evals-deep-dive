@@ -32,12 +32,29 @@ def show(name: str, scorer, output: str, example: Example) -> None:
 
 
 print("exact_match — output must equal expected exactly:")
-show("exact_match", evals.exact_match, "positive", Example(input="", expected="positive"))
-show("exact_match", evals.exact_match, "Positive!", Example(input="", expected="positive"))
+show(
+    "exact_match", evals.exact_match, "positive", Example(input="", expected="positive")
+)
+show(
+    "exact_match",
+    evals.exact_match,
+    "Positive!",
+    Example(input="", expected="positive"),
+)
 
 print("\ncontains_expected — expected appears somewhere in the output:")
-show("contains_expected", evals.contains_expected, "The capital is Paris.", Example(input="", expected="Paris"))
-show("contains_expected", evals.contains_expected, "It is Lyon.", Example(input="", expected="Paris"))
+show(
+    "contains_expected",
+    evals.contains_expected,
+    "The capital is Paris.",
+    Example(input="", expected="Paris"),
+)
+show(
+    "contains_expected",
+    evals.contains_expected,
+    "It is Lyon.",
+    Example(input="", expected="Paris"),
+)
 
 print("\nmatches_regex — output matches a pattern (here: a 4-digit year):")
 year = evals.matches_regex(r"\b\d{4}\b")
