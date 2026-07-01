@@ -61,7 +61,9 @@ report.print_summary()
 # The most useful part of any report is the failures — that's where you learn.
 print("\nWhere the rule-based baseline got it wrong:")
 for r in report.failures("exact_match"):
-    print(f"  predicted {r.output:<9} want {r.example.expected:<9} | {r.example.input[:55]}...")
+    print(
+        f"  predicted {r.output:<9} want {r.example.expected:<9} | {r.example.input[:55]}..."
+    )
 
 print(
     "\nA keyword baseline catches the easy cases and whiffs the subtle ones. That "
