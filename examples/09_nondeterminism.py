@@ -6,14 +6,14 @@ LLM outputs vary between runs (especially above temperature 0). So a single eval
 number is a sample, not the truth — re-run the same eval and it moves. This
 example makes that visible and then does the honest thing with it.
 
-  1. Run the same classifier eval several times at temperature 0.7 and watch the
+  1. Run the same classifier eval several times at temperature 0.9 and watch the
      pass rate wobble. Report the mean with a confidence interval, not one number.
   2. Compare two prompts across several runs each, and use `compare()` to decide
      whether the difference is REAL or just noise.
 
-This is the most expensive example (many calls). It uses a 6-row slice and a few
-runs to stay cheap; turn `ROWS`/`N` down further to spend less, or up for tighter
-intervals.
+This is the most expensive example (many calls). It uses all 10 rows so the hard
+(sarcasm/mixed-signal) rows produce genuine variance; turn `N` down to spend less,
+or up for tighter confidence intervals.
 
 Run it:
 
@@ -25,9 +25,8 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from dotenv import load_dotenv
-
 import evals
+from dotenv import load_dotenv
 
 load_dotenv()
 evals.ensure_ready()
@@ -36,9 +35,9 @@ print(f"Provider: {evals.describe()}\n")
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 dataset = evals.load_jsonl(os.path.join(ROOT, "datasets", "sentiment.jsonl"))
 
-ROWS = dataset[:6]   # small slice to keep the call count (and cost) modest
-N = 4                # runs per prompt
-TEMP = 0.7           # >0 so outputs actually vary run to run
+ROWS = dataset  # all 10 rows; hard rows at the end are genuinely ambiguous (sarcasm, mixed signals)
+N = 4  # runs per prompt
+TEMP = 0.9  # higher temp amplifies variance on uncertain rows
 
 LABELS = ("positive", "negative", "neutral")
 
@@ -50,6 +49,7 @@ def to_label(text: str) -> str:
 
 def run_once(system: str) -> float:
     """One full eval pass; returns the pass rate."""
+
     def task(text: str) -> str:
         return to_label(evals.generate(system, text, temperature=TEMP))
 
@@ -57,9 +57,7 @@ def run_once(system: str) -> float:
     return report.pass_rate("exact")
 
 
-PROMPT_A = (
-    "You are a sentiment classifier. Reply with one word: positive, negative, or neutral."
-)
+PROMPT_A = "You are a sentiment classifier. Reply with one word: positive, negative, or neutral."
 PROMPT_B = (
     "You are a careful sentiment classifier. Watch for sarcasm and mixed signals. "
     "Reply with one word: positive, negative, or neutral."
@@ -78,7 +76,9 @@ print(f"Prompt B pass rates: {[f'{x:.0%}' for x in b_runs]}")
 print(f"  mean {sum(b_runs) / N:.0%}, 95% CI [{b_lo:.0%}, {b_hi:.0%}]\n")
 
 cmp = evals.compare(a_runs, b_runs)
-verdict = "a REAL difference" if cmp["likely_real"] else "within the noise (inconclusive)"
+verdict = (
+    "a REAL difference" if cmp["likely_real"] else "within the noise (inconclusive)"
+)
 print(f"B − A = {cmp['diff']:+.0%} ± {cmp['margin']:.0%}  ->  {verdict}")
 
 print(
