@@ -26,9 +26,8 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from dotenv import load_dotenv
-
 import evals
+from dotenv import load_dotenv
 
 load_dotenv()
 evals.ensure_ready()
@@ -37,15 +36,27 @@ print(f"Provider: {evals.describe()}\n")
 # (question, answer_1, answer_2). We'll always treat answer_1 as the "concise" one
 # and answer_2 as the "verbose" one, then see if position changes the verdict.
 PAIRS = [
-    ("What is the capital of France?", "Paris.",
-     "The capital of France is Paris, which sits on the river Seine."),
-    ("How many continents are there?", "Seven.",
-     "There are seven continents: Africa, Antarctica, Asia, Europe, North America, "
-     "Oceania, and South America."),
-    ("What is the chemical symbol for gold?", "Au.",
-     "Gold's chemical symbol is Au, from the Latin word 'aurum'."),
-    ("What is the square root of 144?", "12.",
-     "The square root of 144 is 12, since 12 times 12 equals 144."),
+    (
+        "What is the capital of France?",
+        "Paris.",
+        "The capital of France is Paris, which sits on the river Seine.",
+    ),
+    (
+        "How many continents are there?",
+        "Seven.",
+        "There are seven continents: Africa, Antarctica, Asia, Europe, North America, "
+        "Oceania, and South America.",
+    ),
+    (
+        "What is the chemical symbol for gold?",
+        "Au.",
+        "Gold's chemical symbol is Au, from the Latin word 'aurum'.",
+    ),
+    (
+        "What is the square root of 144?",
+        "12.",
+        "The square root of 144 is 12, since 12 times 12 equals 144.",
+    ),
 ]
 
 RUBRIC = "which answer is more correct and helpful"
@@ -55,8 +66,12 @@ flipped = 0
 print("Judging each pair in both orders:")
 for question, concise, verbose in PAIRS:
     # Order 1: concise first. Order 2: verbose first.
-    v1 = evals.judge_pairwise(question, concise, verbose, rubric=RUBRIC)   # A=concise, B=verbose
-    v2 = evals.judge_pairwise(question, verbose, concise, rubric=RUBRIC)   # A=verbose, B=concise
+    v1 = evals.judge_pairwise(
+        question, concise, verbose, rubric=RUBRIC
+    )  # A=concise, B=verbose
+    v2 = evals.judge_pairwise(
+        question, verbose, concise, rubric=RUBRIC
+    )  # A=verbose, B=concise
 
     # Map each verdict back to which underlying answer won.
     winner1 = "concise" if v1 == "A" else "verbose" if v1 == "B" else "tie"
@@ -71,7 +86,9 @@ for question, concise, verbose in PAIRS:
         verdict = f"POSITION BIAS (order1={winner1}, order2={winner2})"
     print(f"  {verdict:<48} {question[:32]}")
 
-print(f"\nConsistent verdicts: {consistent}/{len(PAIRS)}   biased/flipped: {flipped}/{len(PAIRS)}")
+print(
+    f"\nConsistent verdicts: {consistent}/{len(PAIRS)}   biased/flipped: {flipped}/{len(PAIRS)}"
+)
 print(
     "\nEvery flip is a verdict that depended on order, not quality. The mitigation "
     "is built into the test: judge both orders and only count a win when the same "
